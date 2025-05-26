@@ -1,0 +1,1 @@
+web: python manage.py collectstatic --noinput && gunicorn musik.wsgi:application --bind 0.0.0.0:$PORT

@@ -1,0 +1,137 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Inicio - Puppi Tinder{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section bg-gradient-pink-light py-5">
+    <div class="container">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-dark mb-4">Encuentra tu compañero perfecto</h1>
+                <p class="lead text-dark mb-4">
+                    Conectamos corazones humanos con patitas peludas. Descubre noticias, adopta un amigo y encuentra todo lo que necesitas para tu mascota.
+                </p>
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    <a href="{% url 'adopcion' %}" class="btn btn-pink btn-lg">
+                        <i class="fas fa-heart me-2"></i>Adoptar ahora
+                    </a>
+                    <a href="{% url 'noticias' %}" class="btn btn-outline-dark btn-lg">
+                        <i class="fas fa-newspaper me-2"></i>Ver noticias
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="{% static 'images/hero-dog.jpg' %}" alt="Perro feliz" class="img-fluid rounded-3 shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">¿Qué puedes hacer en Puppi Tinder?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <i class="fas fa-newspaper text-pink fs-1 mb-3"></i>
+                        <h5 class="card-title fw-bold">Noticias de Perros</h5>
+                        <p class="card-text text-muted">
+                            Mantente informado sobre adopciones, cuidados y noticias importantes del mundo canino
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <i class="fas fa-heart text-danger fs-1 mb-3"></i>
+                        <h5 class="card-title fw-bold">Adopción Responsable</h5>
+                        <p class="card-text text-muted">
+                            Completa un formulario y encuentra el perrito perfecto que está esperando por ti
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <i class="fas fa-shopping-cart text-pink fs-1 mb-3"></i>
+                        <h5 class="card-title fw-bold">Tienda para Mascotas</h5>
+                        <p class="card-text text-muted">
+                            Encuentra los mejores productos para el cuidado y bienestar de tu mejor amigo
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-gradient-pink">
+    <div class="container text-center">
+        <h3 class="fw-bold mb-4">¿Listo para cambiar una vida?</h3>
+        <p class="lead mb-4 opacity-75">Cada adopción es una segunda oportunidad. Comienza tu proceso hoy.</p>
+        <a href="{% url 'adopcion' %}" class="btn btn-dark btn-lg">Comenzar adopción</a>
+    </div>
+</section>
+
+<!-- Featured News Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold">Últimas Noticias</h3>
+            <a href="{% url 'noticias' %}" class="btn btn-outline-pink">Ver todas</a>
+        </div>
+        <div id="featuredNews" class="row g-4">
+            <!-- Las noticias se cargarán aquí via JavaScript -->
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Cargar noticias destacadas
+document.addEventListener('DOMContentLoaded', function() {
+    loadFeaturedNews();
+});
+
+async function loadFeaturedNews() {
+    try {
+        const response = await fetch('/api/news/featured/');
+        const news = await response.json();
+        
+        const container = document.getElementById('featuredNews');
+        container.innerHTML = '';
+        
+        news.slice(0, 3).forEach(article => {
+            const newsCard = `
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <img src="${article.image || '{% static "images/default-news.jpg" %}'}" 
+                             class="card-img-top" alt="${article.title}" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-warning text-dark mb-2">${article.category_name}</span>
+                            <h6 class="card-title fw-bold">${article.title}</h6>
+                            <p class="card-text text-muted small">${article.summary}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">${new Date(article.created_at).toLocaleDateString('es-ES')}</small>
+                                <small class="text-muted">${article.views_count} vistas</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += newsCard;
+        });
+    } catch (error) {
+        console.error('Error loading featured news:', error);
+    }
+}
+</script>
+{% endblock %}
