@@ -19,7 +19,7 @@ DEBUG = True
 ALLOWED_HOSTS = [".railway.app", "localhost", "127.0.0.1"]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://musik-production.up.railway.app'
+    'https://puppitinder.up.railway.app'
 ]
 
 # Application definition
